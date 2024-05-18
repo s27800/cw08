@@ -316,7 +316,10 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<object> Task11()
         {
-            IEnumerable<object> result = null;
+            var syntax = Depts.GroupJoin(Emps, d => d.Deptno, e => e.Deptno,
+                (d, e) => new { name = d.Dname, numOfEmployees = e.Count() }).Where(n => n.numOfEmployees > 1);
+            
+            IEnumerable<object> result = syntax;
             return result;
         }
 
@@ -329,7 +332,7 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<Emp> Task12()
         {
-            IEnumerable<Emp> result = null;
+            IEnumerable<Emp> result = Emps.Method1();
             return result;
         }
 
@@ -342,8 +345,8 @@ namespace Exercise6
         /// </summary>
         public static int Task13(int[] arr)
         {
-            int result = 0;
-            //result=
+            int result = arr.Method2();
+
             return result;
         }
 
@@ -353,17 +356,29 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<Dept> Task14()
         {
-            IEnumerable<Dept> result = null;
-            //result =
+            IEnumerable<Dept> result = Depts.Method3(Emps);
             return result;
         }
     }
 
     public static class CustomExtensionMethods
     {
-        public static void M(this IEnumerable<Emp> emps)
+        public static IEnumerable<Emp> Method1(this IEnumerable<Emp> emps)
         {
-            
+            return emps.Where(e => emps.Any(em => em.Mgr != null && em.Mgr.Empno == e.Empno)).OrderBy(e => e.Ename).ThenByDescending(e => e.Salary);
+        }
+
+        public static int Method2(this int[] arr)
+        {
+            return arr.Select(n => new { Num = n, Count = arr.Count(a => a == n) % 2 }).Where(n => n.Count == 1).First().Num;
+        }
+
+        public static IEnumerable<Dept> Method3(this IEnumerable<Dept> depts, IEnumerable<Emp> emps)
+        {
+            var numsOfDepts = depts.GroupJoin(emps, d => d.Deptno, e => e.Deptno,
+                (d, e) => new { name = d.Dname, numOfEmployees = e.Count() }).Where(n => n.numOfEmployees == 5 || n.numOfEmployees == 0);
+
+            return depts.Where(d => numsOfDepts.Any(de => de.name == d.Dname)).OrderBy(d => d.Dname);
         }
         //Put your extension methods here
     }
