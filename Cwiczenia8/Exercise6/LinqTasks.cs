@@ -243,9 +243,9 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<object> Task6()
         {
-            var syntax = Emps.Join(Depts, e => e.Deptno, d => d.Deptno, (e, d) => e.Deptno == d.Deptno);
+            var syntax = Emps.Join(Depts, e => e.Deptno, d => d.Deptno, (e,d) => new { Ename = e.Ename, Job = e.Job, Dname = d.Dname});
             
-            IEnumerable<object> result = null;
+            IEnumerable<object> result = syntax;
             return result;
         }
 
@@ -254,7 +254,9 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<object> Task7()
         {
-            IEnumerable<object> result = null;
+            var syntax = Emps.GroupBy(e => e.Job).Select(g => new {Praca = g.Key, LiczbaPracownikow = g.Count()});
+            
+            IEnumerable<object> result = syntax;
             return result;
         }
 
@@ -264,7 +266,9 @@ namespace Exercise6
         /// </summary>
         public static bool Task8()
         {
-            bool result = false;
+            var syntax = Emps.Where(e => e.Job == "Backend programmer").Count() > 0;
+            
+            bool result = syntax;
             return result;
         }
 
@@ -274,7 +278,9 @@ namespace Exercise6
         /// </summary>
         public static Emp Task9()
         {
-            Emp result = null;
+            var syntax = Emps.Where(e => e.Job == "Frontend programmer").OrderByDescending(e => e.HireDate).First();
+            
+            Emp result = syntax;
             return result;
         }
 
@@ -285,7 +291,15 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<object> Task10()
         {
-            IEnumerable<object> result = null;
+            var obj = new[]
+            {
+                new {Ename = "Brak wartości", Job = (string) null, HireDate = (DateTime?) null}
+            };
+            
+            var syntax = Emps.Select(e => new { Ename = e.Ename, Job = e.Job, HireDate = e.HireDate })
+                .Union(obj);
+            
+            IEnumerable<object> result = syntax;
             return result;
         }
 
